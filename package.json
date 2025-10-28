@@ -1,0 +1,19 @@
+{
+  "name": "audio",
+  "version": "1.0.0",
+  "description": "\"backend audiovisual software\"",
+  "type": "module",
+  "main": "app.js",
+  "scripts": {
+    "start": " node app.js",
+    "dev": "node --watch app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Bruno Palacios",
+  "license": "MIT",
+  "dependencies": {
+    "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
+    "express": "^5.1.0"
+  }
+}
