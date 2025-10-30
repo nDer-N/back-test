@@ -1,52 +1,24 @@
 import express from 'express'
 import dotenv from 'dotenv'
 import cors from 'cors'
+import routerProd from './routes/routesProducts.js'
+import { errorHandler } from './middleware/error.js'
+import DBMongo from './config/db.js'
 
 dotenv.config()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-const app = express()
+const app = express();
 const PORT = process.env.PORT || 5000
 
+DBMongo();
 app.use(express.json());
 app.use(cors())
 app.use(express.urlencoded({extended: true}))
 
-app.get('/', (req, res) => {
-  console.log('፨v')
-  res.send('Hello World!')
-})
+app.use('/api/products', routerProd);
+app.use(errorHandler);
 
-app.post('/api/products', (req, res) => {
-    const productos = [
-
-        {name: "camara", id:"1"},
-        {name: "microfono", id:"2"}
-
-    ]
-  console.log('፨v')
-  res.json({"productos":productos})
-})
 
 app.listen(PORT, () => {
   console.log(`Example app listening on port ${PORT}`)
