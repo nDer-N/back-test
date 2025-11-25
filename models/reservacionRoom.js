@@ -1,5 +1,5 @@
 import {Schema, model} from "mongoose";
-const reservaSchema = Schema({
+const reservaRoomSchema = Schema({
     name: {
         type: String,
         trim: true
@@ -7,9 +7,6 @@ const reservaSchema = Schema({
     date: {
         type: String,
         trim: true
-    },
-    quantity: {
-        type: Number
     },
     day: {
         type: Number
@@ -20,7 +17,7 @@ const reservaSchema = Schema({
     year: {
         type: Number
     },
-    productId: {
+    roomId: {
         type: Number
     },
     description: {
@@ -35,6 +32,6 @@ const reservaSchema = Schema({
 
 })
 
-const Reserva = model("Reserva", reservaSchema);
+const ReservaRoom = model("ReservaRoom", reservaRoomSchema);
 
-export default Reserva;
+export default ReservaRoom;

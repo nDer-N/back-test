@@ -1,23 +1,23 @@
 import express from "express";
-import Reserva from "../models/reservacion.js";
+import Reserva from "../models/reservacionRoom.js";
 
-const routerReserva = express.Router();
+const routerReservaRooms = express.Router();
 
 ////////////////////////////////////////////////////////////
 
 
 
-routerReserva.post('/', async (req, res, next) =>{
+routerReservaRooms.post('/', async (req, res, next) =>{
   console.log(req.body);
-  if(!req.body.name || !req.body.description || !req.body.quantity || !req.body.productId || !req.body.day || !req.body.month || !req.body.year || !req.body.date || !req.body.user){
+  if(!req.body.name || !req.body.description || !req.body.roomId || !req.body.day || !req.body.month || !req.body.year || !req.body.date || !req.body.user){
     next(new Error("Invalid reservation"));
     return;
   }
-  const {name, description, quantity, productId, day, month, year, date, user, status}=req.body;
+  const {name, description, roomId, day, month, year, date, user, status}=req.body;
 
   try{
     const new_reserva = new Reserva({
-      name, description, quantity, productId, day, month, year, date, user, status
+      name, description, roomId, day, month, year, date, user, status
     });
 
     await new_reserva.save();
@@ -30,7 +30,7 @@ routerReserva.post('/', async (req, res, next) =>{
 
 });
 
-routerReserva.get("/:user", async(req, res, next)=>{
+routerReservaRooms.get("/:user", async(req, res, next)=>{
   const {user} = req.params;
 
   try{
@@ -47,7 +47,7 @@ routerReserva.get("/:user", async(req, res, next)=>{
   next(new Error("Method not implemented"))
 })
 
-routerReserva.get("/:day/:month/:year", async(req, res, next)=>{
+routerReservaRooms.get("/:day/:month/:year", async(req, res, next)=>{
   const {day, month, year} = req.params;
   try{
     const found = await Reserva.find({year, month, day});
@@ -58,7 +58,7 @@ routerReserva.get("/:day/:month/:year", async(req, res, next)=>{
   }
 })
 
-routerReserva.get("/", async(req, res, next)=>{
+routerReservaRooms.get("/", async(req, res, next)=>{
   const {id} = req.params;
   try{
     const now = new Date();
@@ -81,4 +81,4 @@ routerReserva.get("/", async(req, res, next)=>{
 })
 
 
-export default routerReserva;
+export default routerReservaRooms;
