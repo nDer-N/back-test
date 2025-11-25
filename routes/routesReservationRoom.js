@@ -47,38 +47,63 @@ routerReservaRooms.get("/:user", async(req, res, next)=>{
   next(new Error("Method not implemented"))
 })
 
-routerReservaRooms.get("/:day/:month/:year", async(req, res, next)=>{
-  const {day, month, year} = req.params;
-  try{
-    const found = await Reserva.find({year, month, day});
-    res.status(200).json(found);
-  } catch (err){
-    console.eSrror(err);
-    next(err);
-  }
-})
+routerReservaRooms.get("/:date", async (req, res, next) => {
+  const { date } = req.params;
 
-routerReservaRooms.get("/", async(req, res, next)=>{
-  const {id} = req.params;
-  try{
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = now.getMonth() + 1; //Por alguna razon los meses va de 0 a 11 :skull:
-    const day = now.getDate();
+  try {
+    const targetDate = new Date(date);
 
     const found = await Reserva.find({
-      $or: [
-        { year: { $gt: year } },
-        { year, month: { $gt: month } },
-        { year, month, day: { $gte: day } },
-      ]
+      dateStart: { $lte: targetDate },
+      dateEnd: { $gte: targetDate }
     });
+
     res.status(200).json(found);
-  } catch (err){
-    console.eSrror(err);
+  } catch (err) {
+    console.error(err);
     next(err);
   }
-})
+});
+
+routerReservaRooms.get("/", async(req, res, next)=>{
+ 
+ try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const found = await Reserva.find({
+      status: { $ne: "rechazado" },
+      endDate: { $gte: today }  
+    });
+
+    res.status(200).json(found);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+
+routerReservaRooms.post('/:id/status', async (req, res, next) =>{
+const { id } = req.params;
+  const { status } = req.body;
+
+  try {
+    const reserva = await Reserva.findById(id);
+
+    if (!reserva) {
+      return res.status(404).json({ message: "Reserva no encontrada" });
+    }
+
+    reserva.status = status; // actualizar status
+    await reserva.save();
+
+    res.status(200).json(reserva);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 
 
 export default routerReservaRooms;

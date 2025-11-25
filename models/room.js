@@ -1,5 +1,5 @@
 import {Schema, model} from "mongoose";
-const productSchema = Schema({
+const roomSchema = Schema({
     name: {
         type: String,
         trim: true
@@ -8,16 +8,12 @@ const productSchema = Schema({
         type: String,
         trim: true
     },
-    quantity: {
-        type: Number
-    },
     img: {
         type: String
     }
 
-
 })
 
-const Product = model("Product", productSchema);
+const Room = model("Room", roomSchema);
 
-export default Product;
+export default Room;

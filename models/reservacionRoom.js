@@ -4,18 +4,13 @@ const reservaRoomSchema = Schema({
         type: String,
         trim: true
     },
-    date: {
-        type: String,
-        trim: true
+    dateStart: {
+        type: Date,
+       
     },
-    day: {
-        type: Number
-    },
-    month: {
-        type: Number
-    },
-    year: {
-        type: Number
+    dateEnd: {
+        type: Date,
+       
     },
     roomId: {
         type: Number

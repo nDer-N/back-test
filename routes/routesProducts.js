@@ -20,17 +20,18 @@ const routerProd = express.Router();
 
 routerProd.post('/', async (req, res, next) =>{
   console.log(req.body);
-  if(!req.body.name || !req.body.description || !req.body.price){
-    next(new Error("Name, price or description missing"));
+  if(!req.body.name || !req.body.description || !req.body.quantity || !req.body.img){
+    next(new Error("Name, quantity, description or iomage missing"));
     return;
   }
-  const {name, description, price}=req.body;
+  const {name, description, quantity, img}=req.body;
 
   try{
     const new_product = new Product({
       name,
       description,
-      price
+      quantity,
+      img,
     });
 
     await new_product.save();
@@ -70,6 +71,26 @@ routerProd.get("/", async(req, res, next)=>{
     next(err);
   }
 })
+
+routerProd.delete("/:id", async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await Product.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Producto no encontrado" });
+    }
+
+    res.status(200).json({
+      message: "Producto eliminado correctamente",
+      deleted,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
 
 
 export default routerProd;

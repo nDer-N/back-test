@@ -4,20 +4,15 @@ const reservaSchema = Schema({
         type: String,
         trim: true
     },
-    date: {
-        type: String,
-        trim: true
+    dateStart: {
+        type: Date,
+       
+    },
+    dateEnd: {
+        type: Date,
+       
     },
     quantity: {
-        type: Number
-    },
-    day: {
-        type: Number
-    },
-    month: {
-        type: Number
-    },
-    year: {
         type: Number
     },
     productId: {
