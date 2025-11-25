@@ -25,6 +25,9 @@ const reservaSchema = Schema({
     },
     description: {
         type: String
+    },
+    user: {
+        type:String
     }
 
 })
