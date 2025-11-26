@@ -80,7 +80,7 @@ routerReservaRooms.get("/:user", async (req, res, next) => {
 
   try {
     const found = await Reserva.find({
-      status: { $ne: "rechazado" },
+    
       dateEnd: { $gte: today },
       user: user
     });
