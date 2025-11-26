@@ -10,8 +10,7 @@ const routerReservaRooms = express.Router();
 routerReservaRooms.post('/', async (req, res, next) => {
   console.log(req.body);
 
-  if (!req.body.roomId ||
-    !req.body.dateStart || !req.body.dateEnd || !req.body.user) {
+  if (!req.body.available || !req.body.description || !req.body.roomId || !req.body.dateStart || !req.body.dateEnd || !req.body.user) {
   return res.status(400).json("Datos incompletos para reservar el salón");
 }
   const {description, roomId, dateStart, dateEnd, user, status, available } = req.body;
