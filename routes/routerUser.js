@@ -75,6 +75,8 @@ routerUser.post('/:id/warnings', async (req, res, next) => {
   }
 });
 
+
+
 //GET PARA REGRESAR EL USUARIO COMPLETO
 
 routerUser.get("/:id", async(req, res, next)=>{
@@ -106,6 +108,29 @@ routerUser.get("/", async(req, res, next)=>{
     next(err);
   }
 })
+
+routerUser.get("/warnings/:email", async (req, res, next) => {
+  const { email } = req.params;
+
+  try {
+    // Busca solo el campo warnings
+    const user = await User.findOne(
+      { email: email },
+      { warnings: 1, _id: 0 }   // Solo warnings, no _id
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json(user.warnings);
+
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 
 routerUser.delete('/:userId/warnings/:warningId', async (req, res, next) => {
   try {

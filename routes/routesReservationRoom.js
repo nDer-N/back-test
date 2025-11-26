@@ -10,16 +10,16 @@ const routerReservaRooms = express.Router();
 routerReservaRooms.post('/', async (req, res, next) => {
   console.log(req.body);
 
-  if (!req.body.availability || !req.body.name || !req.body.description || !req.body.roomId || !req.body.day || !req.body.month || !req.body.year || !req.body.date || !req.body.user) {
-    next(new Error("Invalid reservation"));
-    return;
-  }
-  const { name, description, roomId, dateStart, dateEnd, user, status, availability } = req.body;
+  if (!req.body.roomId ||
+    !req.body.dateStart || !req.body.dateEnd || !req.body.user) {
+  return res.status(400).json("Datos incompletos para reservar el salón");
+}
+  const {description, roomId, dateStart, dateEnd, user, status, available } = req.body;
 
   try {
-    if (availability > 0) {
+    if (available > 0) {
       const new_reserva = new Reserva({
-        name, description, roomId, dateStart, dateEnd, user, status
+        description, roomId, dateStart, dateEnd, user, status
       });
 
       await new_reserva.save();
@@ -39,33 +39,39 @@ routerReservaRooms.post('/', async (req, res, next) => {
 routerReservaRooms.get("/:user", async (req, res, next) => {
   const { user } = req.params;
 
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
   try {
-    const found = await Reserva.find(user);
+    const found = await Reserva.find({
+      status: { $ne: "rechazado" },
+      dateEnd: { $gte: today },
+      user: user
+    });
 
-
-    res.status(200).json(found);
+    return res.status(200).json(found);
 
   } catch (err) {
     console.error(err);
     next(err);
   }
-  console.log(`id: ${id}`);
-  next(new Error("Method not implemented"))
-})
+});
 
-routerReservaRooms.get("/:roomID/:date", async (req, res, next) => {
-  const { date, roomID } = req.params;
-
+routerReservaRooms.get("/:roomID/:dateStart/:dateEnd", async (req, res, next) => {
   try {
-    const targetDate = new Date(date);
+    const { roomID, dateStart, dateEnd } = req.params;
+
+    const start = new Date(dateStart);
+    const end = new Date(dateEnd);
 
     const found = await Reserva.find({
-      dateStart: { $lte: targetDate },
-      dateEnd: { $gte: targetDate },
-      roomId: roomID
+      roomId: roomID,
+      dateStart: { $lt: end },  // reserva empieza antes de que termine tu rango
+      dateEnd: { $gt: start }   // reserva termina después de que empieza tu rango
     });
 
     res.status(200).json(found);
+
   } catch (err) {
     console.error(err);
     next(err);
@@ -80,7 +86,7 @@ routerReservaRooms.get("/", async (req, res, next) => {
 
     const found = await Reserva.find({
       status: { $ne: "rechazado" },
-      endDate: { $gte: today }
+      dateEnd: { $gte: today }
     });
 
     res.status(200).json(found);

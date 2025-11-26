@@ -1,9 +1,5 @@
 import {Schema, model} from "mongoose";
 const reservaSchema = Schema({
-    name: {
-        type: String,
-        trim: true
-    },
     dateStart: {
         type: Date,
        
@@ -16,7 +12,7 @@ const reservaSchema = Schema({
         type: Number
     },
     productId: {
-        type: Number
+        type: String
     },
     description: {
         type: String
