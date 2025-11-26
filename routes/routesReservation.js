@@ -36,6 +36,25 @@ routerReserva.post('/', async (req, res, next) => {
 
 });
 
+routerReserva.get("/proc", async (req, res, next) => {
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const found = await Reserva.find({
+      status:"proceso",
+      dateEnd: { $gte: today }
+    });
+
+    res.status(200).json(found);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+
 routerReserva.get("/:user", async (req, res, next) => {
   const { user } = req.params;
 
@@ -87,7 +106,7 @@ routerReserva.get("/", async (req, res, next) => {
 
     const found = await Reserva.find({
       status: { $ne: "rechazado" },
-      endDate: { $gte: today }
+      dateEnd: { $gte: today }
     });
 
     res.status(200).json(found);
@@ -96,6 +115,7 @@ routerReserva.get("/", async (req, res, next) => {
     next(err);
   }
 });
+
 
 routerReserva.post('/:id/status', async (req, res, next) => {
   const { id } = req.params;

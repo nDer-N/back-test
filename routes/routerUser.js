@@ -93,7 +93,7 @@ routerUser.get("/:id", async(req, res, next)=>{
     next(err);
   }
   console.log(`id: ${id}`);
-  next(new Error("Method not implemented"))
+  
 })
 
 //GET PARA REGRESAR LISTA DE USUARIOS (VER PERFILES)
@@ -130,6 +130,30 @@ routerUser.get("/warnings/:email", async (req, res, next) => {
     next(err);
   }
 });
+
+routerUser.get("/email/:email", async (req, res, next) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json({
+      email: user.email,
+      img: user.img,
+      name: user.name,
+      warnings: user.warnings
+    });
+
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 
 
 routerUser.delete('/:userId/warnings/:warningId', async (req, res, next) => {
