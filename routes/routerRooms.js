@@ -33,7 +33,7 @@ routerRoom.post('/', async (req, res, next) =>{
 
 routerRoom.get("/:id", async(req, res, next)=>{
   const {id} = req.params;
-
+  console.log(id);
   try{
     const found = await Room.findById(id);
     res.status(200).json(found);
@@ -42,8 +42,8 @@ routerRoom.get("/:id", async(req, res, next)=>{
     console.error(err);
     next(err);
   }
-  console.log(`id: ${id}`);
-  next(new Error("Method not implemented"))
+  
+  
 })
 
 routerRoom.get("/", async(req, res, next)=>{
@@ -56,6 +56,27 @@ routerRoom.get("/", async(req, res, next)=>{
     next(err);
   }
 })
+
+routerRoom.delete("/:id", async (req, res, next) => {
+  const { id } = req.params;
+
+  try {
+    const deleted = await Room.findByIdAndDelete(id);
+
+    if (!deleted) {
+      return res.status(404).json({ message: "Salon no encontrado" });
+    }
+
+    res.status(200).json({
+      message: "Salon eliminado correctamente",
+      deleted,
+    });
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 
 
 export default routerRoom;

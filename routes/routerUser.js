@@ -7,7 +7,7 @@ const routerUser = express.Router();
 
 //ESTE POST ES PARA CREAR EL USUARIO SI ES LA PRIMERA VEZ QUE INICIA SESIÓN
     routerUser.post('/', async (req, res, next) =>{
-        if(!req.body.name || !req.body.email || !req.body.warnings){
+        if(!req.body.name || !req.body.email || !req.body.warnings || !req.body.img){
         next(new Error("Invalid user"));
         return;
     }
@@ -24,7 +24,8 @@ const routerUser = express.Router();
         const new_user = new User({
         name,
         email,
-        warnings
+        warnings,
+        img
         });
 
         await new_user.save();
@@ -74,6 +75,8 @@ routerUser.post('/:id/warnings', async (req, res, next) => {
   }
 });
 
+
+
 //GET PARA REGRESAR EL USUARIO COMPLETO
 
 routerUser.get("/:id", async(req, res, next)=>{
@@ -90,7 +93,7 @@ routerUser.get("/:id", async(req, res, next)=>{
     next(err);
   }
   console.log(`id: ${id}`);
-  next(new Error("Method not implemented"))
+  
 })
 
 //GET PARA REGRESAR LISTA DE USUARIOS (VER PERFILES)
@@ -105,6 +108,53 @@ routerUser.get("/", async(req, res, next)=>{
     next(err);
   }
 })
+
+routerUser.get("/warnings/:email", async (req, res, next) => {
+  const { email } = req.params;
+
+  try {
+    // Busca solo el campo warnings
+    const user = await User.findOne(
+      { email: email },
+      { warnings: 1, _id: 0 }   // Solo warnings, no _id
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json(user.warnings);
+
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+routerUser.get("/email/:email", async (req, res, next) => {
+  const { email } = req.params;
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+
+    return res.status(200).json({
+      email: user.email,
+      img: user.img,
+      name: user.name,
+      warnings: user.warnings
+    });
+
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+
 
 routerUser.delete('/:userId/warnings/:warningId', async (req, res, next) => {
   try {

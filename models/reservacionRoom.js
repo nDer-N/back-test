@@ -1,9 +1,5 @@
 import {Schema, model} from "mongoose";
 const reservaRoomSchema = Schema({
-    name: {
-        type: String,
-        trim: true
-    },
     dateStart: {
         type: Date,
        
@@ -13,7 +9,7 @@ const reservaRoomSchema = Schema({
        
     },
     roomId: {
-        type: Number
+        type: String
     },
     description: {
         type: String
