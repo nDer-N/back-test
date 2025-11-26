@@ -7,7 +7,7 @@ const routerUser = express.Router();
 
 //ESTE POST ES PARA CREAR EL USUARIO SI ES LA PRIMERA VEZ QUE INICIA SESIÓN
     routerUser.post('/', async (req, res, next) =>{
-        if(!req.body.name || !req.body.email || !req.body.warnings){
+        if(!req.body.name || !req.body.email || !req.body.warnings || !req.body.img){
         next(new Error("Invalid user"));
         return;
     }
@@ -24,7 +24,8 @@ const routerUser = express.Router();
         const new_user = new User({
         name,
         email,
-        warnings
+        warnings,
+        img
         });
 
         await new_user.save();
