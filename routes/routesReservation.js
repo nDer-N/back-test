@@ -54,6 +54,25 @@ routerReserva.get("/proc", async (req, res, next) => {
   }
 });
 
+routerReserva.get("/active", async (req, res, next) => {
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const found = await Reserva.find({
+      status:"accepted",
+      dateEnd: { $gte: today },
+      dateStart: { $lte: today }
+    });
+
+    res.status(200).json(found);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 
 routerReserva.get("/:user", async (req, res, next) => {
   const { user } = req.params;
@@ -63,7 +82,6 @@ routerReserva.get("/:user", async (req, res, next) => {
 
   try {
     const found = await Reserva.find({
-      status: { $ne: "rechazado" },
       dateEnd: { $gte: today },
       user: user
     });
@@ -86,7 +104,8 @@ routerReserva.get("/:productID/:dateStart/:dateEnd", async (req, res, next) => {
     const found = await Reserva.find({
       productId: productID,
       dateStart: { $lt: end },  // reserva empieza antes de que termine tu rango
-      dateEnd: { $gt: start }   // reserva termina después de que empieza tu rango
+      dateEnd: { $gt: start } , // reserva termina después de que empieza tu rango
+      status: {$ne: "rechazado"}
     });
 
     res.status(200).json(found);

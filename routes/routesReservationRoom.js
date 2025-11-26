@@ -35,6 +35,43 @@ routerReservaRooms.post('/', async (req, res, next) => {
 
 });
 
+routerReservaRooms.get("/proc", async (req, res, next) => {
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const found = await Reserva.find({
+      status:"proceso",
+      dateEnd: { $gte: today }
+    });
+
+    res.status(200).json(found);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
+routerReservaRooms.get("/active", async (req, res, next) => {
+
+  try {
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const found = await Reserva.find({
+      status:"accepted",
+      dateEnd: { $gte: today },
+      dateStart: { $lte: today }
+    });
+
+    res.status(200).json(found);
+  } catch (err) {
+    console.error(err);
+    next(err);
+  }
+});
+
 routerReservaRooms.get("/:user", async (req, res, next) => {
   const { user } = req.params;
 
