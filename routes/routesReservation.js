@@ -9,20 +9,25 @@ const routerReserva = express.Router();
 
 routerReserva.post('/', async (req, res, next) =>{
   console.log(req.body);
-  if(!req.body.name || !req.body.description || !req.body.quantity || !req.body.productId || !req.body.day || !req.body.month || !req.body.year || !req.body.date || !req.body.user){
+  if(!req.body.available || !req.body.name || !req.body.description || !req.body.quantity || !req.body.productId || !req.body.day || !req.body.month || !req.body.year || !req.body.date || !req.body.user){
     next(new Error("Invalid reservation"));
     return;
   }
-  const {name, description, quantity, productId, day, month, year, date, user, status}=req.body;
+  const {name, description, quantity, productId, user, dateStart, dateEnd, status, available}=req.body;
 
   try{
-    const new_reserva = new Reserva({
-      name, description, quantity, productId, day, month, year, date, user, status
+    if(available>=quantity){
+        const new_reserva = new Reserva({
+        name, description, quantity, status
     });
 
-    await new_reserva.save();
+     await new_reserva.save();
 
     res.status(201).json(new_reserva);
+    } else {
+       res.status(400).json("Cantidad no disponible para esta fecha");
+    }
+    
   }catch (err){
     console.error(err);
     next(err);
@@ -47,15 +52,17 @@ routerReserva.get("/:user", async(req, res, next)=>{
   next(new Error("Method not implemented"))
 })
 
-routerReserva.get("/:date", async (req, res, next) => {
-  const { date } = req.params;
+routerReserva.get("/:productID/:date", async (req, res, next) => {
+  const { date, productID } = req.params;
+  const targetDate = new Date(date);
 
   try {
     const targetDate = new Date(date);
 
     const found = await Reserva.find({
       dateStart: { $lte: targetDate },
-      dateEnd: { $gte: targetDate }
+      dateEnd: { $gte: targetDate },
+      productId: productID
     });
 
     res.status(200).json(found);
